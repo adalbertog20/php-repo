@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: tuto-app
+    restart: always
+    working_dir: /home/rusty/www/
+    volumes:
+      - ../:/home/rusty/www
+  nginx:
+    image: nginx:1.19-alpine
+    container_name: tuto-nginx
+    restart: always
+    ports:
+      - 8000:80
+    volumes:
+      - ../:/home/rusty/www
+      - ./nginx:/etc/nginx/conf.d
