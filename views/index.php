@@ -1,5 +1,4 @@
-<?= $foo ?>
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="receipt" />
-    <button type="submit">Upload</button>
+<form action="/" method="post">
+    <input type="email" name="email" placeholder="type yor name"/>
+    <button type="submit">send</button>
 </form>

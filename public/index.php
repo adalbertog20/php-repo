@@ -1,26 +1,29 @@
 <?php
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
-session_start();
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 
 define('STORAGE_PATH', __DIR__ . '/../storage');
 define('VIEW_PATH', __DIR__ . '/../views');
 
-use App\Exceptions\RouteNotFoundException;
 use App\Router;
-use App\View;
+use App\Config;
 
-try {
-    $router = new Router();
+$router = new Router();
 
-    $router
-        ->get('/', [App\Controllers\HomeController::class, 'index'])
-        ->post('/upload', [App\Controllers\HomeController::class, 'upload'])
-        ->get('/invoices', [App\Controllers\InvoiceController::class, 'index'])
-        ->get('/invoices/create', [App\Controllers\InvoiceController::class, 'create'])
-        ->post('/invoices/create', [App\Controllers\InvoiceController::class, 'store']);
+$router
+    ->get('/', [App\Controllers\HomeController::class, 'index'])
+    ->post('/upload', [App\Controllers\HomeController::class, 'upload'])
+    ->get('/invoices', [App\Controllers\InvoiceController::class, 'index'])
+    ->get('/invoices/create', [App\Controllers\InvoiceController::class, 'create'])
+    ->post('/invoices/create', [App\Controllers\InvoiceController::class, 'store']);
 
-    echo $router->resolve($_SERVER['REQUEST_URI'], strtolower($_SERVER['REQUEST_METHOD']));
-} catch (RouteNotFoundException $e) {
-    echo View::make('error/404');
-}
+(
+    new \App\App(
+        $router,
+        ['uri' => $_SERVER['REQUEST_URI'], 'method' => $_SERVER['REQUEST_METHOD']],
+        new Config($_ENV)
+    )
+)->run();
